@@ -13,7 +13,6 @@
 # limitations under the License.
 
 # pylint: disable=too-few-public-methods
-# pylint: disable=too many leading '#' for block comment
 
 """
 Test Factory to make fake objects for testing
