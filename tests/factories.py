@@ -35,7 +35,7 @@ class CONST:
     PRODUCT_CATEGORIES=[
         Category.UNKNOWN,       Category.CLOTHS,        Category.FOOD,
         Category.HOUSEWARES,    Category.AUTOMOTIVE,    Category.TOOLS,
-        ]
+        ] # TODO: should have a better way from ENUM to LIST
 
 
 class ProductFactory(factory.Factory):
