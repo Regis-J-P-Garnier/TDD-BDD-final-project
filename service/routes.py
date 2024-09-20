@@ -20,7 +20,8 @@ Product Store Service with UI
 """
 from flask import jsonify, request, abort
 from flask import url_for  # noqa: F401 pylint: disable=unused-import
-from service.models import Product
+from service.models import Product, Category
+
 from service.common import status  # HTTP Status Codes
 from . import app
 
@@ -153,24 +154,26 @@ def list_all_products():
     products = []
     product_name = request.args.get("name")
     product_category = request.args.get("category")
-    app.logger.critical(product_name)
-    app.logger.critical(type(product_name))
-    app.logger.critical(product_category)
-    app.logger.critical(type(product_category))
     undone = True
     # TODO : what are the specs if more than one request un the url ? order ? subset ?
     if undone and product_category not in ["", None]:
-        app.logger.critical("product_category")
+        # converter
+        def converter_to_enum(enum):
+            def string_to_enum(name_string):
+                return getattr(enum, name_string.upper())
+            return string_to_enum
+        string_to_category = converter_to_enum(Category)
+        # DB response
         undone = False
-        products = Product.find_by_category(product_category)
+        try:
+            category_enum_element = string_to_category(product_category)
+        except Exception as err:
+            category_enum_element = string_to_category("unknown")    
+        products = Product.find_by_category(category_enum_element)     
     if undone and product_name not in ["", None]:
-        app.logger.critical("product_name")
         undone = False
         products = Product.find_by_name(product_name)
-        app.logger.critical(products)
-        app.logger.critical(products.count())
     if undone:
-        app.logger.critical("product_all")
         undone = False  
         products = Product.all()
     products_serialized = []

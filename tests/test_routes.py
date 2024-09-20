@@ -315,51 +315,40 @@ class TestProductRoutes(TestCase):
     def test_future(self):
         pass
         if(False):
-            def test_list_by_category_products(self):
-                """It should list Products by category [EX3]"""
-                # CREATE some PRODUCTS
-                number_to_create = 5  # >0
-                product_categories = []
-                for _ in range(number_to_create):  # for number of Products to create
-                    product = ProductFactory()
-                    response = self.client.post(BASE_URL, json=product.serialize())
-                    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-                    product_categories.append(product.category)
-                # COUNT PRODUCTS with SAME CATEGORIES    
-                p0_category = product_categories[0]
-                p0_category_counter=0   
-                for product_category in product_categories:
-                    if product_category == p0_category:
-                        p0_category_counter +=1
-                # RETRIEVE PRODUCTS with SAME CATEGORIES
-                query_string_quoted=f"category={quote_plus(p0_category)}"
-                response = self.client.get(BASE_URL, query_string=query_string_quoted)
-                self.assertEqual(response.status_code, status.HTTP_200_OK)
-                # COMPARE COUNT PRODUCTS with SAME CATEGORIES 
-                self.assertEqual(len(response.get_json()), p0_category_counter)
+            pass
+        
+    def test_list_by_category_products(self):
+        """It should list Products by category [EX3]"""
+        # CREATE some PRODUCTS
+        number_to_create = 5  # >0
+        product_categories = []
+        for _ in range(number_to_create):  # for number of Products to create
+            product = ProductFactory()
+            response = self.client.post(BASE_URL, json=product.serialize())
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            product_categories.append(product.serialize()["category"])
+        # COUNT PRODUCTS with SAME CATEGORIES    
+        p0_category = product_categories[0]
+        p0_category_counter=0   
+        for product_category in product_categories:
+            if product_category == p0_category:
+                p0_category_counter +=1
+        # RETRIEVE PRODUCTS with SAME CATEGORIES
+        query_string_quoted=f"category={quote_plus(p0_category)}"
+        response = self.client.get(BASE_URL, query_string=query_string_quoted)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # COMPARE COUNT PRODUCTS with SAME CATEGORIES 
+        self.assertEqual(len(response.get_json()), p0_category_counter)
 
-            def test_list_by_unknown_category_products(self):
-                """It should list but with no Product of the category, return empty data [EX3]"""
-                product = ProductFactory()
-                response = self.client.post(BASE_URL, json=product.serialize())
-                self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-                # RETRIEVE PRODUCTS with NOT EXISTING CATEGORY
-                query_attribute_string_raw="category=DUMMY_CATEGORY"
-                query_string_quoted=f"category={quote_plus(query_attribute_string_raw)}"
-                response = self.client.get(BASE_URL, query_string=query_string_quoted)
-                self.assertEqual(response.status_code, status.HTTP_200_OK)
-                # COMPARE COUNT PRODUCTS with NOT EXISTING CATEGORY 
-                self.assertEqual(len(response.get_json()), 0)
-
-            def test_list_by_category_in_empty_db(self):
-                """It should list but with no Product of the category, return empty data [EX3]"""
-                # RETRIEVE PRODUCTS with NOT EXISTING CATEGORY
-                query_attribute_string_raw="category=DUMMY_CATEGORY"
-                query_string_quoted=f"category={quote_plus(query_attribute_string_raw)}"
-                response = self.client.get(BASE_URL, query_string=query_string_quoted)
-                self.assertEqual(response.status_code, status.HTTP_200_OK)
-                # COMPARE COUNT PRODUCTS with NOT EXISTING CATEGORY 
-                self.assertEqual(len(response.get_json()), 0)  
+    def test_list_by_category_in_empty_db(self):
+        """It should list but with no Product of the category, return empty data [EX3]"""
+        # RETRIEVE PRODUCTS with NOT EXISTING CATEGORY
+        query_attribute_string_raw="category=DUMMY_CATEGORY"
+        query_string_quoted=f"category={quote_plus(query_attribute_string_raw)}"
+        response = self.client.get(BASE_URL, query_string=query_string_quoted)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # COMPARE COUNT PRODUCTS with NOT EXISTING CATEGORY 
+        self.assertEqual(len(response.get_json()), 0)  
     
     ######################################################################
     # Utility functions
