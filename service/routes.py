@@ -105,24 +105,75 @@ def create_products():
 ######################################################################
 # R E A D   A   P R O D U C T
 ######################################################################
-
-#
-# PLACE YOUR CODE HERE TO READ A PRODUCT
-#
+# [EX3-T2]
+@app.route("/products/<int:product_id>", methods=["GET"])  # [1]
+def get_products(product_id):  # [2]
+    """ Retrieve a product (JSON OUT) by id"""
+    product_by_id = Product.find(product_id)  # [3]
+    if product_by_id is None:  # [4]
+        abort(status.HTTP_404_NOT_FOUND, f"can't find <product.id=={product_id}>")  # [4]
+    return product_by_id.serialize(), status.HTTP_200_OK  # [5], [6]
 
 ######################################################################
 # U P D A T E   A   P R O D U C T
 ######################################################################
-
-#
-# PLACE YOUR CODE TO UPDATE A PRODUCT HERE
-#
+# [EX3]
+@app.route("/products/<int:product_id>", methods=["PUT"])
+def update_products(product_id):
+    """ Update a product (JSON IN)"""
+    check_content_type("application/json")
+    product_by_id = Product.find(product_id)
+    if product_by_id is None:  # [4]
+        abort(status.HTTP_404_NOT_FOUND, f"can't find <product.id=={product_id}>")
+    product_by_id.deserialize(request.get_json())
+    product_by_id.update()
+    return product_by_id.serialize(), status.HTTP_200_OK
 
 ######################################################################
 # D E L E T E   A   P R O D U C T
 ######################################################################
+# [EX3]
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_products(product_id):
+    """ delete a product (JSON OUT)"""
+    app.logger.error("in delete_products")
+    product_by_id = Product.find(product_id)
+    app.logger.error(product_by_id)
+    if product_by_id is None:
+        abort(status.HTTP_404_NOT_FOUND, f"can't find <product.id=={product_id}>")
+    product_by_id.delete()
+    return jsonify(""), status.HTTP_204_NO_CONTENT
 
-
-#
-# PLACE YOUR CODE TO DELETE A PRODUCT HERE
-#
+######################################################################
+# LIST PRODUCTS
+######################################################################
+@app.route("/products", methods=["GET"])
+def list_all_products():
+    """Returns all Products as a list"""
+    products = []
+    product_name = request.args.get("name")
+    product_category = request.args.get("category")
+    app.logger.critical(product_name)
+    app.logger.critical(type(product_name))
+    app.logger.critical(product_category)
+    app.logger.critical(type(product_category))
+    undone = True
+    # TODO : what are the specs if more than one request un the url ? order ? subset ?
+    if undone and product_category not in ["", None]:
+        app.logger.critical("product_category")
+        undone = False
+        products = Product.find_by_category(product_category)
+    if undone and product_name not in ["", None]:
+        app.logger.critical("product_name")
+        undone = False
+        products = Product.find_by_name(product_name)
+        app.logger.critical(products)
+        app.logger.critical(products.count())
+    if undone:
+        app.logger.critical("product_all")
+        undone = False  
+        products = Product.all()
+    products_serialized = []
+    for product in products:
+        products_serialized.append(product.serialize())
+    return jsonify(products_serialized), status.HTTP_200_OK
