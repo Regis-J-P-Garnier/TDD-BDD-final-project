@@ -188,30 +188,30 @@ class TestProductModel(unittest.TestCase):
 
     def test_list_all_products(self):
         """It should list all products from the database   [EX2]"""
-        NUMB_CREATE = 5
+        number_to_create = 5
         # EXPECT 0 OBJECT IN DB
         products_origin = Product.all()  # [1]
         self.assertEqual(len(products_origin), 0)  # [1]
         # ADD PRODUCTS
-        for _ in range(NUMB_CREATE):  # [2]
+        for _ in range(number_to_create):  # [2]
             ProductFactory().create()  # [2]
         # VALID CREATION
         products_created = Product.all()  # [3]
-        self.assertEqual(len(products_created), NUMB_CREATE)  # [3]
+        self.assertEqual(len(products_created), number_to_create)  # [3]
 
     def test_find_a_product_by_name(self):
         """It should find a product by name from the database   [EX2]"""
-        NUMB_CREATE = 5
+        number_to_create = 5
         # EXPECT 0 OBJECT IN DB
         products_origin = Product.all()
         self.assertEqual(len(products_origin), 0)
         # ADD PRODUCTS & VALID CREATION
         products_created = []
-        for _ in range(NUMB_CREATE):  # [1]
+        for _ in range(number_to_create):  # [1]
             products_created.append(ProductFactory().create())  # [1]
         products_created = Product.all()
-        self.assertEqual(len(Product.all()), NUMB_CREATE)
-        self.assertEqual(len(products_created), NUMB_CREATE)
+        self.assertEqual(len(Product.all()), number_to_create)
+        self.assertEqual(len(products_created), number_to_create)
         # RETRIEVE FIRST PRODUCT
         p0_name = products_created[0].name  # [2]
         # RETRIEVE BY NAME and COUNT
@@ -232,17 +232,17 @@ class TestProductModel(unittest.TestCase):
 
     def test_find_a_product_by_category(self):
         """It should find a product by category from the database   [EX2]"""
-        NUMB_CREATE = 10
+        number_to_create = 10
         # EXPECT 0 OBJECT IN DB
         products_origin = Product.all()
         self.assertEqual(len(products_origin), 0)
         # ADD PRODUCTS & VALID CREATION
         products_created = []
-        for _ in range(NUMB_CREATE):  # [1]
+        for _ in range(number_to_create):  # [1]
             products_created.append(ProductFactory().create())  # [1]
         products_created = Product.all()
-        self.assertEqual(len(Product.all()), NUMB_CREATE)
-        self.assertEqual(len(products_created), NUMB_CREATE)
+        self.assertEqual(len(Product.all()), number_to_create)
+        self.assertEqual(len(products_created), number_to_create)
         # RETRIEVE FIRST PRODUCT
         p0_category = products_created[0].category  # [2]
         # RETRIEVE BY CATEGORY and COUNT
