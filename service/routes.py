@@ -96,24 +96,19 @@ def create_products():
 
 
 ######################################################################
-# L I S T   A L L   P R O D U C T S
-######################################################################
-
-#
-# PLACE YOUR CODE TO LIST ALL PRODUCTS HERE
-#
-
-######################################################################
 # R E A D   A   P R O D U C T
 ######################################################################
 # [EX3-T2]
 @app.route("/products/<int:product_id>", methods=["GET"])  # [1]
 def get_products(product_id):  # [2]
-    """ Retrieve a product (JSON OUT) by id"""
+    """Retrieve a product (JSON OUT) by id"""
     product_by_id = Product.find(product_id)  # [3]
     if product_by_id is None:  # [4]
-        abort(status.HTTP_404_NOT_FOUND, f"can't find <product.id=={product_id}>")  # [4]
+        abort(
+            status.HTTP_404_NOT_FOUND, f"can't find <product.id=={product_id}>"
+        )  # [4]
     return product_by_id.serialize(), status.HTTP_200_OK  # [5], [6]
+
 
 ######################################################################
 # U P D A T E   A   P R O D U C T
@@ -121,7 +116,7 @@ def get_products(product_id):  # [2]
 # [EX3]
 @app.route("/products/<int:product_id>", methods=["PUT"])
 def update_products(product_id):
-    """ Update a product (JSON IN)"""
+    """Update a product (JSON IN)"""
     check_content_type("application/json")
     product_by_id = Product.find(product_id)
     if product_by_id is None:  # [4]
@@ -130,13 +125,14 @@ def update_products(product_id):
     product_by_id.update()
     return product_by_id.serialize(), status.HTTP_200_OK
 
+
 ######################################################################
 # D E L E T E   A   P R O D U C T
 ######################################################################
 # [EX3]
 @app.route("/products/<int:product_id>", methods=["DELETE"])
 def delete_products(product_id):
-    """ delete a product (JSON OUT)"""
+    """delete a product (JSON OUT)"""
     app.logger.error("in delete_products")
     product_by_id = Product.find(product_id)
     app.logger.error(product_by_id)
@@ -144,6 +140,7 @@ def delete_products(product_id):
         abort(status.HTTP_404_NOT_FOUND, f"can't find <product.id=={product_id}>")
     product_by_id.delete()
     return jsonify(""), status.HTTP_204_NO_CONTENT
+
 
 ######################################################################
 # LIST PRODUCTS
@@ -154,27 +151,34 @@ def list_all_products():
     products = []
     product_name = request.args.get("name")
     product_category = request.args.get("category")
+    available = request.args.get("available")
     undone = True
     # TODO : what are the specs if more than one request un the url ? order ? subset ?
-    if undone and product_category not in ["", None]:
+    if undone and product_category:
         # converter
         def converter_to_enum(enum):
             def string_to_enum(name_string):
                 return getattr(enum, name_string.upper())
+
             return string_to_enum
+
         string_to_category = converter_to_enum(Category)
         # DB response
         undone = False
         try:
             category_enum_element = string_to_category(product_category)
-        except Exception as err:
-            category_enum_element = string_to_category("unknown")    
-        products = Product.find_by_category(category_enum_element)     
-    if undone and product_name not in ["", None]:
+        except AttributeError:
+            app.logger.warning("bad category requested, use 'unknown' instead")
+            category_enum_element = string_to_category("unknown")
+        products = Product.find_by_category(category_enum_element)
+    if undone and product_name:
         undone = False
         products = Product.find_by_name(product_name)
+    if undone and available:
+        undone = False
+        products = Product.find_by_availability("true")
     if undone:
-        undone = False  
+        undone = False
         products = Product.all()
     products_serialized = []
     for product in products:
