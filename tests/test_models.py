@@ -262,3 +262,15 @@ class TestProductModel(unittest.TestCase):
         for product in products_created:  # only same
             if product.id not in product_by_category_ids:
                 self.assertNotEqual(product.category, p0_category)
+
+      def test_find_by_availability(self):
+        """It should Find Products by Availability (official solution)"""
+        products = ProductFactory.create_batch(10) # use ao the non API version
+        for product in products:
+            product.create()
+        available = products[0].available
+        count = len([product for product in products if product.available == available]) # in desc for version
+        found = Product.find_by_availability(available)
+        self.assertEqual(found.count(), count)
+        for product in found:
+            self.assertEqual(product.available, available)
