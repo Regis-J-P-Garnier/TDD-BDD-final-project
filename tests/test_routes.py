@@ -89,7 +89,8 @@ class TestProductRoutes(TestCase):
         products = []
         for _ in range(count):
             test_product = ProductFactory()
-            response = self.client.post(BASE_URL, json=test_product.serialize())
+            response = self.client.post(
+                BASE_URL, json=test_product.serialize())
             self.assertEqual(
                 response.status_code,
                 status.HTTP_201_CREATED,
@@ -150,12 +151,15 @@ class TestProductRoutes(TestCase):
     def test_create_product_no_content_type(self):
         """It should not Create a Product with no Content-Type"""
         response = self.client.post(BASE_URL, data="bad data")
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(response.status_code,
+                         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_create_product_wrong_content_type(self):
         """It should not Create a Product with wrong Content-Type"""
-        response = self.client.post(BASE_URL, data={}, content_type="plain/text")
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        response = self.client.post(
+            BASE_URL, data={}, content_type="plain/text")
+        self.assertEqual(response.status_code,
+                         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     ######################################################################
     # R E A D   A   P R O D U C T
@@ -172,8 +176,10 @@ class TestProductRoutes(TestCase):
         self.assertEqual(
             response_product["description"], test_product.description
         )  # [5]
-        self.assertEqual(Decimal(response_product["price"]), test_product.price)  # [5]
-        self.assertEqual(response_product["available"], test_product.available)  # [5]
+        self.assertEqual(
+            Decimal(response_product["price"]), test_product.price)  # [5]
+        self.assertEqual(
+            response_product["available"], test_product.available)  # [5]
         self.assertEqual(
             response_product["category"], test_product.category.name
         )  # [5]
@@ -182,7 +188,8 @@ class TestProductRoutes(TestCase):
         """It should fail in getting a not existent Product (by id) [EX3-T2]"""
         invalid_product_id = 0  # [1]
         response = self.client.get(f"{BASE_URL}/{invalid_product_id}")  # [1]
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)  # [2]
+        self.assertEqual(response.status_code,
+                         status.HTTP_404_NOT_FOUND)  # [2]
 
     ######################################################################
     # U P D A T E   A   P R O D U C T
@@ -197,9 +204,11 @@ class TestProductRoutes(TestCase):
         # UPDATE a PRODUCT
         product_origin_description = copy.copy(product.description)
         product_fake_description = copy.copy(ProductFactory().description)
-        self.assertNotEqual(product_fake_description, product_origin_description)
+        self.assertNotEqual(product_fake_description,
+                            product_origin_description)
         product.description = product_fake_description
-        response = self.client.put(f"{BASE_URL}/{product.id}", json=product.serialize())
+        response = self.client.put(
+            f"{BASE_URL}/{product.id}", json=product.serialize())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # COMPARE : all except DESCRIPTIONS equal origin product
         response_product = response.get_json()
@@ -208,8 +217,10 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response_product["available"], product.available)
         self.assertEqual(response_product["category"], product.category.name)
         # COMPARE : DESCRIPTIONS equal updated product
-        self.assertNotEqual(response_product["description"], product_origin_description)
-        self.assertEqual(response_product["description"], product_fake_description)
+        self.assertNotEqual(
+            response_product["description"], product_origin_description)
+        self.assertEqual(
+            response_product["description"], product_fake_description)
 
     def test_put_update_not_found(self):
         """It should fail in updating a not existent Product [EX3]"""
@@ -236,19 +247,25 @@ class TestProductRoutes(TestCase):
             product_created_ids.append(response.get_json()["id"])
         # DELETE a PRODUCT
         for product_id in product_created_ids:  # for all created Products
-            response = self.client.get(f"{BASE_URL}/{product_id}")  # not deleted Product id
-            self.assertEqual(response.status_code, status.HTTP_200_OK)  # should exist
+            # not deleted Product id
+            response = self.client.get(f"{BASE_URL}/{product_id}")
+            self.assertEqual(response.status_code,
+                             status.HTTP_200_OK)  # should exist
         response = self.client.delete(
             f"{BASE_URL}/{str(product_created_ids[-1])}"
         )  # TODO : better a random to select an id
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
         # EXPECT number_to_create-1 Products REMAINING in DB
-        for product_id in product_created_ids[:-1]:  # for all created Products except deleted
-            response = self.client.get(f"{BASE_URL}/{product_id}")  # not deleted Product id
-            self.assertEqual(response.status_code, status.HTTP_200_OK)  # should exist
+        # for all created Products except deleted
+        for product_id in product_created_ids[:-1]:
+            # not deleted Product id
+            response = self.client.get(f"{BASE_URL}/{product_id}")
+            self.assertEqual(response.status_code,
+                             status.HTTP_200_OK)  # should exist
         for product_id in product_created_ids[-1:]:  # for deleted Product
-            response = self.client.get(f"{BASE_URL}/{product_id}")  # deleted Product id
+            response = self.client.get(
+                f"{BASE_URL}/{product_id}")  # deleted Product id
             self.assertEqual(
                 response.status_code, status.HTTP_404_NOT_FOUND
             )  # should not exist

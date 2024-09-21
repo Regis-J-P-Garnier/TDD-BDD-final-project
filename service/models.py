@@ -144,7 +144,8 @@ class Product(db.Model):
                 Category, data["category"]
             )  # create enum from string
         except AttributeError as error:
-            raise DataValidationError("Invalid attribute: " + error.args[0]) from error
+            raise DataValidationError(
+                "Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
             raise DataValidationError(
                 "Invalid product: missing " + error.args[0]

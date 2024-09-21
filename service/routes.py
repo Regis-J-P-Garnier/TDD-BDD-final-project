@@ -59,7 +59,8 @@ def check_content_type(content_type):
     if request.headers["Content-Type"] == content_type:
         return
 
-    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    app.logger.error("Invalid Content-Type: %s",
+                     request.headers["Content-Type"])
     abort(
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         f"Content-Type must be {content_type}",
@@ -120,7 +121,8 @@ def update_products(product_id):
     check_content_type("application/json")
     product_by_id = Product.find(product_id)
     if product_by_id is None:  # [4]
-        abort(status.HTTP_404_NOT_FOUND, f"can't find <product.id=={product_id}>")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"can't find <product.id=={product_id}>")
     product_by_id.deserialize(request.get_json())
     product_by_id.update()
     return product_by_id.serialize(), status.HTTP_200_OK
@@ -137,7 +139,8 @@ def delete_products(product_id):
     product_by_id = Product.find(product_id)
     app.logger.error(product_by_id)
     if product_by_id is None:
-        abort(status.HTTP_404_NOT_FOUND, f"can't find <product.id=={product_id}>")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"can't find <product.id=={product_id}>")
     product_by_id.delete()
     return jsonify(""), status.HTTP_204_NO_CONTENT
 

@@ -165,7 +165,8 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(p_found_updated.price, p_origin.price)
 
         # EXPECT changed
-        self.assertNotEqual(p_found_updated.description, description_origin)  # [8]
+        self.assertNotEqual(p_found_updated.description,
+                            description_origin)  # [8]
         self.assertEqual(p_found_updated.description, description_fake)  # [8]
 
         # EXPECT update and not add
@@ -251,7 +252,8 @@ class TestProductModel(unittest.TestCase):
             if product.category == p0_category:  # [3]
                 counter_p0_category += 1  # [3]
         products_by_category = Product.find_by_category(p0_category)  # [4]
-        self.assertEqual(products_by_category.count(), counter_p0_category)  # [5]
+        self.assertEqual(products_by_category.count(),
+                         counter_p0_category)  # [5]
         # EXPECT ALL SAME CATEGORY and ONLY SAME CATEGORY
         product_by_category_ids = []
         for product in products_by_category:  # all same   # [6]

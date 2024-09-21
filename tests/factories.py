@@ -32,12 +32,12 @@ class CONST:
     PRODUCT_NAMES = [
         "Hat",      "Pants",    "Shirt",    "Apple",    "Banana",   "Pots",
         "Towels",   "Ford",     "Chevy",    "Hammer",   "Wrench"
-        ]
+    ]
 
     PRODUCT_CATEGORIES = [
         Category.UNKNOWN,       Category.CLOTHS,        Category.FOOD,
         Category.HOUSEWARES,    Category.AUTOMOTIVE,    Category.TOOLS,
-        ]  # TODO: should have a better way from ENUM to LIST
+    ]  # TODO: should have a better way from ENUM to LIST
 
 
 class ProductFactory(factory.Factory):
