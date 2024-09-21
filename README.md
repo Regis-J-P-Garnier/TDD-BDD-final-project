@@ -1,8 +1,8 @@
-# TDD / BDD Final Project Template
+# TDD / BDD Final Project
 
 This repository contains the my proposition for the final exam of TDD/BDD or the Coursera course Introduction to TDD/BDD.
 
-## change
+## Changes
 
 * done the job on my own computer with VSCODE so maybe some small config change.
 * web server on port 8081. 
