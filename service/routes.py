@@ -137,7 +137,6 @@ def delete_products(product_id):
     """delete a product (JSON OUT)"""
     app.logger.error("in delete_products")
     product_by_id = Product.find(product_id)
-    app.logger.error(product_by_id)
     if product_by_id is None:
         abort(status.HTTP_404_NOT_FOUND,
               f"can't find <product.id=={product_id}>")

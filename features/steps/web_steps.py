@@ -25,13 +25,18 @@ For information on Waiting until elements are present in the HTML see:
     https://selenium-python.readthedocs.io/waits.html
 """
 import logging
+import time
 from behave import when, then
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
 ID_PREFIX = 'product_'
+API_ROOT_URL = "/products"
 
+logger = logging.getLogger("test_routes")  # remove ambiguity
+# and allow filtering with NOSE option --debug=
+logger.setLevel(logging.DEBUG)
 
 @when('I visit the "Home Page"')
 def step_impl(context):
@@ -81,10 +86,20 @@ def step_impl(context, element_name):
 @when('I copy the "{element_name}" field')
 def step_impl(context, element_name):
     element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
-    element = WebDriverWait(context.driver, context.wait_seconds).until(
-        expected_conditions.presence_of_element_located((By.ID, element_id))
-    )
+    element = None
+    if True:
+        time.sleep(1)
+        logging.info('Clipboard contains EID: %s', element_id)
+        element = context.driver.find_element(By.ID, element_id)
+        logging.info('Clipboard contains EID: %s', element.get_attribute('id'))
+    else:
+        element = WebDriverWait(context.driver, context.wait_seconds).until(
+            expected_conditions.presence_of_element_located((By.ID, element_id))
+        )
     context.clipboard = element.get_attribute('value')
+    logging.info('Clipboard contains innerHTML: %s', element.get_attribute('innerHTML'))
+    logging.info('Clipboard contains TEXT: %s', element.get_attribute('text'))
+    logging.info('Clipboard contains VALUE: %s', element.get_attribute('value'))
     logging.info('Clipboard contains: %s', context.clipboard)
 
 @when('I paste the "{element_name}" field')
@@ -104,7 +119,42 @@ def step_impl(context, element_name):
 # to get the element id of any button
 ##################################################################
 
-## UPDATE CODE HERE ##
+
+@when('I press the "{button}" button')
+def step_impl(context, button):
+    button_id = button.lower() + '-btn'
+    
+    logger.error(button_id)
+    logger.error(context.driver.find_element_by_id("product_id").text)
+    context.driver.find_element_by_id(button_id).click()
+
+
+@then('I should see the message "{message}"')
+def step_impl(context, message):
+    found = WebDriverWait(context.driver, context.wait_seconds).until(
+    expected_conditions.text_to_be_present_in_element(
+        (By.ID, 'flash_message'),
+        message
+        )
+    )
+    assert(found)
+
+
+@then('I should see "{result}" in the results')
+def step_impl(context, result):
+    found = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'search_results'),
+            result
+        )
+    )
+    assert(found)
+
+
+@then('I should not see "{result}" in the results')
+def step_impl(context, result):
+    element = context.driver.find_element_by_id('search_results')
+    assert(result not in element.text)
 
 ##################################################################
 # This code works because of the following naming convention:
@@ -132,3 +182,5 @@ def step_impl(context, element_name, text_string):
     )
     element.clear()
     element.send_keys(text_string)
+    
+    

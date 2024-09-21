@@ -7,7 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-WAIT_SECONDS = int(getenv('WAIT_SECONDS', '30'))
+WAIT_SECONDS = int(getenv('WAIT_SECONDS', '45'))
 BASE_URL = getenv('BASE_URL', 'http://localhost:8081')
 DRIVER = getenv('DRIVER', 'chrome').lower()
 
@@ -41,5 +41,5 @@ def before_all(context):
 
 def after_all(context):
     """ Executed after all tests """
-    context.driver.quit(context.base_url)
+    context.driver.quit()
     
